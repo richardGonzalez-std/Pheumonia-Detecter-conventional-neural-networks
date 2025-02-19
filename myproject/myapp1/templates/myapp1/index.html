@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Neumonía</title>
+    <style>
+        /* Paleta de colores con rgba(30, 123, 210, 0.4) */
+        body {
+            background-color: rgba(30, 123, 210, 0.1); /* Fondo suave */
+            color: #333; /* Texto oscuro para contraste */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: rgba(30, 123, 210, 0.8); /* Encabezado más oscuro */
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #ffffff; /* Texto blanco para el encabezado */
+        }
+
+        nav {
+            background-color: rgba(30, 123, 210, 0.6); /* Navegación */
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: #ffffff; /* Texto blanco para enlaces */
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: rgba(30, 123, 210, 1); /* Color más intenso al pasar el mouse */
+        }
+
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con opacidad */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            color: rgba(30, 123, 210, 1); /* Títulos en color principal */
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        footer {
+            background-color: rgba(30, 123, 210, 0.8); /* Pie de página */
+            color: #ffffff; /* Texto blanco para el pie de página */
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        button {
+            background-color: rgba(30, 123, 210, 1); /* Botón en color principal */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: rgba(30, 123, 210, 0.8); /* Color más oscuro al pasar el mouse */
+
+            #loadingScreen {
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
+        color: white;
+        text-align: center;
+        padding-top: 20%;
+        font-size: 2em;
+        z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */}
+    }
+</style>
+<script>
+    function showLoading() {
+        document.getElementById('loadingScreen').style.display = 'block';
+    }
+</script>
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Detector de Neumonía</h1>
+    </header>
+
+    <nav>
+        <a href="#introduccion">Introducción</a>
+        <a href="#Modelo">Modelo</a>
+    </nav>
+
+    <section id="introduccion">
+        <h2>Introducción</h2>
+        <h3>Descripción del Proyecto</h3>
+            <p>Este proyecto utiliza redes neuronales convolucionales para identificar si un paciente tiene neumonía a partir de imágenes médicas. Utilizando un modelo entrenado, podemos clasificar las imágenes y ayudar en el diagnóstico médico.</p>
+            
+    </section>
+
+    <section id="Modelo">
+        <h2>Modelo</h2>
+        <div class="container">
+            
+            <h3>Sube una Imagen</h3>
+            <form action="{% url 'modelo' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="image" accept="image/*" required >
+                <br><br>
+                <button type="submit">Enviar Imagen</button>
+            </form>
+            {% if prediction is not none %}
+                <p>
+                    {% if prediction > 0.5 %}
+                        El paciente es positivo a posibilidad de neumonía.
+                    {% else %}
+                        El paciente es negativo a posibilidad de neumonía.
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Detector de Neumonía. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
