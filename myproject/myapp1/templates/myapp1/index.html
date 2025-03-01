@@ -64,7 +64,11 @@
         p {
             line-height: 1.6;
         }
-
+        .container form input[type="file"]{
+            border: none;
+            width: 18%;
+            color: green;
+        }
         footer {
             background-color: rgba(30, 123, 210, 0.8);
             color: #ffffff;
@@ -73,7 +77,20 @@
             position:static;
             width: 100%;
         }
-
+        #drop-area{
+            border: 2px dashed #ccc;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        
+        #drop-area.highlight {
+            border-color: purple;
+        }
         button {
     background: linear-gradient(135deg, #1E7BD2, #125A9D);
     color: white;
@@ -114,26 +131,24 @@ button:hover {
             animation: spin 1s linear infinite;
             margin: auto;
         }
+        .custom-file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(90deg,#1E7BD2, #125A9D);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
+.custom-file-label:hover {
+    background: linear-gradient(45deg,#125A5D,#1E7BD2, #125A5D);
+}
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
     </style>
-    <script>
-        function showLoading() {
-            document.getElementById('loadingScreen').style.display = 'block';
-        }
-        function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            const preview = document.getElementById('imagePreview');
-            preview.src = reader.result;
-            preview.style.display = 'block';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-    </script>
+
 </head>
 
 <body>
@@ -156,16 +171,22 @@ button:hover {
         
         <div class="container">
             {% if prediction is None %}
-                
+            <div id="drop-area">
                 <form action="{% url 'modelo' %}" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
                     <h2>Modelo</h2>
-                    <h3>Sube una Imagen</h3>
+                    <h3>Sube tu Tomografia</h3>
                     {% csrf_token %}
-                    <input type="file" name="image" accept="image/*" required onchange="previewImage(event)">
-                    <img id="imagePreview" src="" width="200" height="200" alt="Vista previa" style="display:none; max-width:100%; margin-top:10px;">
-                    <br><br>
-                    <button type="submit">Enviar Imagen</button>
+                    
+                        <p>Arrastra y suelta tu Imagen aquí o haz clic en el botón</p>
+                        <input type="file" id="image" name="image" accept="image/*" hidden required onchange="previewImage(event)">
+                        <label for="image" class="custom-file-label">Choose File</label>
+                        <img id="imagePreview" src="" width="200" height="200" alt="Vista previa" style="display:none; max-width:100%; margin-top:10px;">
+                        <br><br>
+                        <button type="submit">Enviar Imagen</button>
+                    
+                    
                 </form>
+            </div>
             {% else %}
                 <form method="post">
                     {% csrf_token %}
@@ -184,13 +205,77 @@ button:hover {
         </div>
     </section>
 
-    <div id="loadingScreen">
-        <div class="spinner"></div>
-        <p>Procesando imagen.....</p>
-    </div>
+    <!-- ...existing code... -->
+<div id="loadingScreen">
+    <div class="spinner"></div>
+    <p>Procesando imagen.....</p>
+</div>
 
-    <footer>
-        <p>&copy; 2025 Detector de Neumonía. Todos los derechos reservados.</p>
-    </footer>
+<footer>
+    <p>&copy; 2025 Detector de Neumonía. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+// Selecciona el área de drop
+let dropArea = document.getElementById('drop-area');
+
+// Prevenir comportamientos por defecto para eventos de drag & drop
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, preventDefaults, false);
+  document.body.addEventListener(eventName, preventDefaults, false);
+});
+function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const preview = document.getElementById('imagePreview');
+            preview.src = reader.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+// Resaltar el área cuando se arrastra un archivo sobre ella
+['dragenter', 'dragover'].forEach(eventName => {
+  dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+});
+['dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+});
+
+// Manejar el evento drop
+dropArea.addEventListener('drop', handleDrop, false);
+
+function handleDrop(e) {
+  let dt = e.dataTransfer;
+  let files = dt.files;
+  // Asignar los archivos al input file
+  document.getElementById('image').files = files;
+  handleFiles(files);
+}
+
+// Mostrar una vista previa de la imagen seleccionada
+function handleFiles(files) {
+  const file = files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('imagePreview');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// Función para mostrar la pantalla de carga (opcional)
+function showLoading() {
+  document.getElementById('loadingScreen').style.display = 'block';
+}
+</script>
+<!-- ...existing code... -->
 </body>
 </html>

@@ -6,7 +6,7 @@ import io
 import numpy as np
 # Create your views here.
 
-model = load_model('myapp1/modelo_1.keras')
+model = load_model('/home/richard/myproject/Pheumonia-Detecter-conventional-neural-networks-/myproject/modelo_1.keras')
 
 def index(request):
     # model = load_model('myproject/myapp1/modelo_1.keras')
