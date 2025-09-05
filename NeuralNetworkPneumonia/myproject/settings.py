@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-nvyj(m2jak7w7grj#wii2=5!a7wna421e8)!qbff65@c@pei9u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "pheumonia-detecter-conventional-neural.onrender.com"
+]
 
 
 # Application definition
@@ -122,3 +124,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
